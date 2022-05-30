@@ -32,7 +32,7 @@ export default function Experience({ listKey }) {
       style={{
         height,
         width,
-        backgroundColor: '#00FF00',
+        backgroundColor: '#FFA000',
       }}
     >
       <Canvas
