@@ -1,48 +1,53 @@
-import React, { useState } from 'react';
-import { View, FlatList, Dimensions } from 'react-native';
-import Experience from './Experience';
+import React, { Suspense, useRef } from 'react';
+import { View } from 'react-native';
+import { Canvas, useLoader, useThree } from '@react-three/fiber/native';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader';
+import useWindowDimensions from 'react-native/Libraries/Utilities/useWindowDimensions';
+import localKtxPath from './assets/duck_texture.ktx2'
+
+
+function Plane() {
+const ref = useRef();
+  const gl = useThree(state => state.gl)
+  // const textureUrl = 'https://cdntest.metatube.studio/public/duck_texture.ktx2'
+  const textureUrl = localKtxPath
+  const texture = useLoader(KTX2Loader, textureUrl, (loader) => {
+    loader.setTranscoderPath(`https://cdn.jsdelivr.net/gh/pmndrs/drei-assets@master/basis/`)
+    .detectSupport(gl);
+  })
+  return(
+    <mesh>
+      <planeBufferGeometry attach="geometry" args={[3, 3]} />
+      <meshStandardMaterial ref={ref} attach="material" color="orange" map={texture} />
+    </mesh>
+  )
+}
 
 export default function App() {
-  const [items] = useState([
-    {
-      id: '1',
-      name: 'Experience 1',
-    },
-    {
-      id: '2',
-      name: 'Experience 2',
-    },
-    {
-      id: '3',
-      name: 'Experience 3',
-    },
-    {
-      id: '4',
-      name: 'Experience 4',
-    },
-  ]);
-
+  const { width, height } = useWindowDimensions();
   return (
     <View
       style={{
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#FFFF00',
+        height,
+        width,
+        backgroundColor: '#FFA000',
       }}
     >
-      <FlatList
-        data={items}
-        style={{
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#0000FF',
+      <Canvas
+        onCreated={(s) => {
+          s.setSize(width, height);
         }}
-        renderItem={({ item }) => <Experience name={item.name} listKey={item.id} />}
-        maxToRenderPerBatch={2}
-        snapToAlignment="start"
-        decelerationRate="fast"
-        snapToInterval={Dimensions.get('window').height}
-      />
+        gl={{ physicallyCorrectLights: true }}
+        camera={{ position: [-6, 0, 16], fov: 36 }}
+      >
+        <color attach="background" args={[0xe2f4df]} />
+        <ambientLight />
+        <directionalLight intensity={1.1} position={[0.5, 0, 0.866]} />
+        <directionalLight intensity={0.8} position={[-6, 2, 2]} />
+        <Suspense>
+          <Plane />
+        </Suspense>
+      </Canvas>
     </View>
   );
 }

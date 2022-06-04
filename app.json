@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "r3f-error",
-    "slug": "r3f-error",
+    "name": "r3f-texture",
+    "slug": "r3f-texture",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
